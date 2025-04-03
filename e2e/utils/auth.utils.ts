@@ -14,9 +14,4 @@ export async function login(page: Page, username: string, password: string) {
 
 export async function verifySuccessfulLogin(page: Page) {
   await expect(page).toHaveURL(/.*\/wl\/.*/);
-  await expect(page).not.toHaveURL('about:blank');
-}
-
-export async function verifyFailedLogin(page: Page) {
-  await expect(page.getByText('Invalid credentials!')).toBeVisible();
 }
