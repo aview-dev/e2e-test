@@ -1,7 +1,10 @@
 import { Page, expect } from '@playwright/test';
+import { API_ENDPOINT } from './common';
+
+const endpoint = API_ENDPOINT;
 
 export async function login(page: Page, username: string, password: string) {
-  await page.goto('http://localhost/login');
+  await page.goto(`${endpoint}/login`);
   
   // 로그인 수행
   await page.getByPlaceholder('Username or Email').fill(username);

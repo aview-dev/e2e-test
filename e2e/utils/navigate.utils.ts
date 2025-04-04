@@ -24,3 +24,8 @@ export async function ApsRulePage(page: Page) {
     await page.goto(`${API_ENDPOINT}/mgmt/resource/aps-rules`);
     await page.waitForLoadState('networkidle');
 }
+
+export async function UserSettingPage(page: Page) {
+    await page.goto(`${API_ENDPOINT}/user-setting/user/settings`);
+    await page.waitForLoadState('networkidle');
+}
