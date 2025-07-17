@@ -9,7 +9,9 @@ test.describe.serial('User Tests', () => {
   test.describe('Configuration [pwd, security]', () => {
     test('Update Password Config', async ({ page }) => {
       await login(page, ADMIN_ID!, ADMIN_PASSWORD!);
-      await ConfigPage(page);
+
+      // COnfig Page
+      await ConfigPage(page); 
 
       await page.locator('#form-storage').getByRole('button').click();
       await page.locator('#form-storage').getByRole('button', { name: 'Restore default' }).click();
@@ -24,6 +26,17 @@ test.describe.serial('User Tests', () => {
       await page.locator('div:nth-child(5) > div:nth-child(2) > .mb-1 > .relative > .slide-toggle > .slide-toggle-label > .slide-toggle-track').click();
       await page.locator('div:nth-child(6) > div:nth-child(2) > .mb-1 > .relative > .slide-toggle > .slide-toggle-label > .slide-toggle-track').click();
       await page.locator('div:nth-child(7) > div:nth-child(2) > .mb-1 > .relative > .slide-toggle > .slide-toggle-label > .slide-toggle-track').click();
+
+      // User Page
+      await UserPage(page);
+      
+      await page.getByRole('link', { name: 'Create a user' }).click();
+
+      await expect(page.getByText('Password must be at least 3 characters long')).toBeVisible();
+      await expect(page.getByText('Password must not include user id or email ID.')).toBeVisible();
+      await expect(page.getByText('Password must include at least 1 number.')).toBeVisible();
+      await expect(page.getByText('Password must include at least 1 special character.')).toBeVisible();
+      await expect(page.getByText('Password must include mixed case letters.')).toBeVisible();
     });
 
     test('Update Security Config', async ({ page }) => {
@@ -39,14 +52,15 @@ test.describe.serial('User Tests', () => {
   });
 
   // 로그인 관련 테스트는 병렬 실행
-  test.describe('Login Tests', () => {
+  // test.skip('Login Tests', () => {
+    test.describe('Login Tests', () => {
     test('Failed Login', async ({ page }) => {
       const wrongPwd = "dfaf12312"
       await login(page, 'dfafaq', wrongPwd);
-      await expect(page.getByText('Unauthenticated!')).toBeVisible();
+      await expect(page.getByText('Login failed.')).toBeVisible();
 
       await login(page, ADMIN_ID!, wrongPwd);
-      await expect(page.getByText('Invalid credentials!')).toBeVisible();
+      await expect(page.getByText('Login failed.')).toBeVisible();
     });
 
     test('Success Login', async ({ page }) => {
@@ -74,27 +88,19 @@ test.describe.serial('User Tests', () => {
 
     test('Create User', async ({ page }) => {
       await login(page, ADMIN_ID!, ADMIN_PASSWORD!);
-      await UserPage(page);
-      // 새로고침
       await page.reload();
-
+      await UserPage(page);
+      
       // click create user button
       await page.getByRole('link', { name: 'Create a user' }).click();
-
-      // validation password rule
-      await expect(page.getByText('Password must be at least 3 characters long')).toBeVisible();
-      await expect(page.getByText('Password must not include user id or email ID.')).toBeVisible();
-      await expect(page.getByText('Password must include at least 1 number.')).toBeVisible();
-      await expect(page.getByText('Password must include at least 1 special character.')).toBeVisible();
-      await expect(page.getByText('Password must include mixed case letters.')).toBeVisible();
-
+      
       // input user info
       await page.getByRole('textbox', { name: 'Username*' }).fill(testUser.username);
       await page.getByRole('textbox', { name: 'Display name*' }).fill(testUser.displayName);
       await page.getByRole('textbox', { name: 'Email' }).fill(testUser.email);
       await page.getByRole('textbox', { name: 'Description' }).fill(testUser.description);
       await page.getByRole('textbox', { name: 'Password*', exact: true }).fill(testUser.password);
-      await page.getByText('Confirm password').click();
+      await page.getByText('Confirm password').click(); 
       await page.getByRole('textbox', { name: 'Password*', exact: true }).fill(testUser.password);
       await page.getByRole('textbox', { name: 'Confirm password*' }).fill(testUser.password);
 
